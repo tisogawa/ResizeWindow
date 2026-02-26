@@ -6,8 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B85ACBBD2F3494A90084EDD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B85ACBBA2F3494A90084EDD6 /* Assets.xcassets */; };
+		B85ACBBF2F3494A90084EDD6 /* ResizeWindowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85ACBBC2F3494A90084EDD6 /* ResizeWindowApp.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		B82B47D62F34724100500D5C /* ResizeWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResizeWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B85ACBBA2F3494A90084EDD6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B85ACBBC2F3494A90084EDD6 /* ResizeWindowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeWindowApp.swift; sourceTree = "<group>"; };
+		B85ACBC12F3494B00084EDD6 /* ResizeWindow */ = {isa = PBXGroup; children = (B85ACBBA2F3494A90084EDD6, B85ACBBC2F3494A90084EDD6); path = ResizeWindow; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -24,6 +32,7 @@
 		B82B47CD2F34724100500D5C = {
 			isa = PBXGroup;
 			children = (
+				B85ACBC12F3494B00084EDD6 /* ResizeWindow */,
 				B82B47D72F34724100500D5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -70,6 +79,7 @@
 				TargetAttributes = {
 					B82B47D52F34724100500D5C = {
 						CreatedOnToolsVersion = 26.2;
+						LastSwiftMigration = 2620;
 					};
 				};
 			};
@@ -97,6 +107,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B85ACBBD2F3494A90084EDD6 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,6 +118,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B85ACBBF2F3494A90084EDD6 /* ResizeWindowApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +248,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -244,6 +257,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -256,6 +270,7 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 			};
@@ -266,6 +281,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -274,6 +290,7 @@
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

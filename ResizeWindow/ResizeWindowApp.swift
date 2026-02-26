@@ -78,7 +78,7 @@ struct ResizeContentView: View {
                 Button("Resize") {
                     performResize(move: useXY, target: WindowResizer.WindowTarget.frontmost)
                 }
-                Button("Inspect front-most") {
+                Button("Check Frontmost Window") {
                     DispatchQueue.global(qos: .userInitiated).async {
                         let diag = WindowResizer.shared.inspectFrontmost()
                         // write to message and append to log
@@ -491,13 +491,49 @@ final class WindowResizer {
     // Put this inside WindowResizer (near other helpers)
     func inspectFrontmost() -> String {
         var out = ""
-        // frontmost app pid
-        guard let frontApp = NSWorkspace.shared.frontmostApplication else {
-            return "No frontmost app found"
+
+        // Check Accessibility permission first
+        if !AXIsProcessTrusted() {
+            return "⚠️ Accessibility permission not granted!\n\nPlease:\n1. Click 'Open Accessibility Settings' below\n2. Remove ResizeWindow from the list (if present)\n3. Re-add ResizeWindow and enable it\n4. Restart the app"
         }
-        let pid = frontApp.processIdentifier
-        let appName = frontApp.localizedName ?? "PID:\(pid)"
-        out += "Frontmost app: \(appName) (pid:\(pid))\n"
+
+        // Get the actual frontmost window (not ResizeWindow itself)
+        // Use the same logic as getFrontmostAppPID() to skip our own app
+        let ourPid = getpid()
+        var pid: pid_t = 0
+        var appName = "unknown"
+
+        do {
+            pid = try getFrontmostAppPID()
+            if let app = NSRunningApplication(processIdentifier: pid) {
+                appName = app.localizedName ?? "PID:\(pid)"
+            }
+        } catch {
+            return "No frontmost app found: \(error)"
+        }
+
+        // Get window size from the focused window
+        var sizeStr = ""
+        do {
+            let window = try findWindow(for: pid_t(pid), index: nil, titleSubstring: nil)
+            var val: CFTypeRef?
+            let axErr = AXUIElementCopyAttributeValue(window, kAXSizeAttribute as CFString, &val)
+            if axErr == .success, let cfVal = val, CFGetTypeID(cfVal) == AXValueGetTypeID() {
+                let axVal: AXValue = unsafeBitCast(cfVal, to: AXValue.self)
+                var s = CGSize.zero
+                if AXValueGetValue(axVal, .cgSize, &s) {
+                    sizeStr = " \(Int(s.width)) x \(Int(s.height))"
+                } else {
+                    sizeStr = " [AXValueGetValue failed]"
+                }
+            } else {
+                sizeStr = " [AX size query failed: \(axErr.rawValue)]"
+            }
+        } catch {
+            sizeStr = " [Error: \(error)]"
+        }
+
+        out += "Frontmost: \(appName) (pid:\(pid))\(sizeStr)\n"
 
         // list CGWindow z-order (front -> back)
         let opts: CGWindowListOption = [.optionOnScreenOnly, .excludeDesktopElements]
