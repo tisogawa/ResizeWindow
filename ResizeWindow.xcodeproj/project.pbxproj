@@ -9,17 +9,37 @@
 /* Begin PBXBuildFile section */
 		B85ACBBD2F3494A90084EDD6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B85ACBBA2F3494A90084EDD6 /* Assets.xcassets */; };
 		B85ACBBF2F3494A90084EDD6 /* ResizeWindowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85ACBBC2F3494A90084EDD6 /* ResizeWindowApp.swift */; };
+		B8A100012F3500010084EDD6 /* ResizeWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A100022F3500010084EDD6 /* ResizeWindowTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B8A100082F3500010084EDD6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B82B47CE2F34724100500D5C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B82B47D52F34724100500D5C;
+			remoteInfo = ResizeWindow;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B82B47D62F34724100500D5C /* ResizeWindow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResizeWindow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B85ACBBA2F3494A90084EDD6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B85ACBBC2F3494A90084EDD6 /* ResizeWindowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeWindowApp.swift; sourceTree = "<group>"; };
 		B85ACBC12F3494B00084EDD6 /* ResizeWindow */ = {isa = PBXGroup; children = (B85ACBBA2F3494A90084EDD6, B85ACBBC2F3494A90084EDD6); path = ResizeWindow; sourceTree = "<group>"; };
+		B8A100022F3500010084EDD6 /* ResizeWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResizeWindowTests.swift; sourceTree = "<group>"; };
+		B8A100032F3500010084EDD6 /* ResizeWindowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ResizeWindowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B82B47D32F34724100500D5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8A100062F3500010084EDD6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -33,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				B85ACBC12F3494B00084EDD6 /* ResizeWindow */,
+				B8A100042F3500010084EDD6 /* ResizeWindowTests */,
 				B82B47D72F34724100500D5C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,8 +62,17 @@
 			isa = PBXGroup;
 			children = (
 				B82B47D62F34724100500D5C /* ResizeWindow.app */,
+				B8A100032F3500010084EDD6 /* ResizeWindowTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		B8A100042F3500010084EDD6 /* ResizeWindowTests */ = {
+			isa = PBXGroup;
+			children = (
+				B8A100022F3500010084EDD6 /* ResizeWindowTests.swift */,
+			);
+			path = ResizeWindowTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -63,9 +93,28 @@
 			name = ResizeWindow;
 			packageProductDependencies = (
 			);
-			productName = ResizeBar;
+			productName = ResizeWindow;
 			productReference = B82B47D62F34724100500D5C /* ResizeWindow.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B8A100072F3500010084EDD6 /* ResizeWindowTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B8A1000C2F3500010084EDD6 /* Build configuration list for PBXNativeTarget "ResizeWindowTests" */;
+			buildPhases = (
+				B8A100052F3500010084EDD6 /* Sources */,
+				B8A100062F3500010084EDD6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B8A100092F3500010084EDD6 /* PBXTargetDependency */,
+			);
+			name = ResizeWindowTests;
+			packageProductDependencies = (
+			);
+			productName = ResizeWindowTests;
+			productReference = B8A100032F3500010084EDD6 /* ResizeWindowTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -74,8 +123,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2620;
+				LastSwiftUpdateCheck = 2710;
+				LastUpgradeCheck = 2710;
 				TargetAttributes = {
 					B82B47D52F34724100500D5C = {
 						CreatedOnToolsVersion = 26.2;
@@ -98,6 +147,7 @@
 			projectRoot = "";
 			targets = (
 				B82B47D52F34724100500D5C /* ResizeWindow */,
+				B8A100072F3500010084EDD6 /* ResizeWindowTests */,
 			);
 		};
 /* End PBXProject section */
@@ -122,7 +172,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B8A100052F3500010084EDD6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8A100012F3500010084EDD6 /* ResizeWindowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B8A100092F3500010084EDD6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B82B47D52F34724100500D5C /* ResizeWindow */;
+			targetProxy = B8A100082F3500010084EDD6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B82B47DF2F34724300500D5C /* Debug */ = {
@@ -178,7 +244,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -235,7 +301,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -272,7 +338,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -304,7 +370,57 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		B8A1000A2F3500010084EDD6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SV8SX8488;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.isogawa.ResizeWindowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ResizeWindow.app/Contents/MacOS/ResizeWindow";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+			};
+			name = Debug;
+		};
+		B8A1000B2F3500010084EDD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SV8SX8488;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.7;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.isogawa.ResizeWindowTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ResizeWindow.app/Contents/MacOS/ResizeWindow";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 			};
 			name = Release;
 		};
@@ -325,6 +441,15 @@
 			buildConfigurations = (
 				B82B47E22F34724300500D5C /* Debug */,
 				B82B47E32F34724300500D5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B8A1000C2F3500010084EDD6 /* Build configuration list for PBXNativeTarget "ResizeWindowTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8A1000A2F3500010084EDD6 /* Debug */,
+				B8A1000B2F3500010084EDD6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

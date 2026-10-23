@@ -12,8 +12,8 @@ A minimal macOS menu bar app that allows you to quickly resize and reposition th
 
 ## Requirements
 
-- macOS 26.2 or later
-- Xcode 26.2 or later (for building)
+- macOS 26.7 or later
+- Xcode 27.1 or later, Swift 6
 - Accessibility permission (required for window manipulation)
 
 ## Installation
@@ -59,16 +59,18 @@ The app **requires** Accessibility permission to manipulate windows:
 ## Usage
 
 1. Click the ResizeWindow icon in the menu bar (rectangle expand icon)
-2. Enter desired width and height (default: 1440x900)
-3. Optionally enable "Move window" and enter X/Y coordinates
-4. Click "Resize" to apply to the frontmost window
-5. Use "Inspect front-most" to debug window properties
+2. Enter a width and height greater than 0 (the fields start at 1440 and 900)
+3. Optionally enable "Move window" and enter both X and Y. The origin is the top-left of the primary display, and negative values reach other displays
+4. Click "Resize". Empty or non-numeric values are rejected and do not change the window
+5. The result reports the measured size and position. If the app clamps the size, both the measured value and the request are shown
+6. Use "Check Frontmost Window" to debug window properties
 
 ## Architecture
 
-- **Single-file design**: All logic in `ResizeWindow/ResizeWindowApp.swift`
+- **Single-file design**: All app logic in `ResizeWindow/ResizeWindowApp.swift`
+- **Unit tests**: `ResizeWindowTests/ResizeWindowTests.swift` covers dimension parsing and frontmost-window selection
 - **No sandboxing**: Sandboxing is disabled (`ENABLE_APP_SANDBOX = NO`) because sandboxed apps cannot use Accessibility APIs to control other applications
-- **SwiftUI + AppKit**: Modern SwiftUI interface with AppKit integration for menu bar functionality
+- **SwiftUI + AppKit**: SwiftUI popover with AppKit status item integration
 
 ## Development
 
@@ -77,8 +79,9 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation and developme
 ### Key Implementation Details
 
 - Uses `AXUIElement` APIs for window discovery and manipulation
-- Filters out system windows (Window Server, Dock, loginwindow)
-- Runs window operations on background queue to avoid UI blocking
+- Prefers the frontmost app when it has an eligible on-screen window, then falls back to window z-order
+- Filters out its own windows and system windows (Window Server, Dock, loginwindow)
+- Runs window operations off the main actor so the popover stays responsive
 - No code signing required for development builds
 
 ## License

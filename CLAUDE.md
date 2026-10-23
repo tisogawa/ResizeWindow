@@ -4,15 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ResizeWindow is a minimal macOS menu bar app built with Swift and SwiftUI that allows users to resize and reposition the frontmost window. The app appears as a status bar item and provides a popover interface for window manipulation.
+ResizeWindow is a minimal macOS menu bar app built with Swift and SwiftUI that resizes and repositions the frontmost window. The app appears as a status bar item and provides a popover for window manipulation.
+
+It targets this Mac only: macOS 26.7 or later, Xcode 27.1, Swift 6 language mode. The deployment target is 26.7 even though Xcode 27 ships the macOS 27 SDK, because this machine is macOS 26.7.1.
 
 ## Build and Run
-
-This is an Xcode project targeting macOS 26.2+.
 
 **Build and run:**
 ```bash
 xcodebuild -project ResizeWindow.xcodeproj -scheme ResizeWindow -configuration Debug build
+```
+
+**Run the unit tests:**
+```bash
+xcodebuild -project ResizeWindow.xcodeproj -scheme ResizeWindow -configuration Debug -destination 'platform=macOS' test
 ```
 
 **Run from Xcode:**
@@ -39,7 +44,7 @@ xcodebuild -project ResizeWindow.xcodeproj -scheme ResizeWindow clean
 
 The Debug build is preferred over Release because:
 - Release builds require code signing, and macOS kills unsigned apps
-- Debug builds work perfectly when copied to /Applications
+- Debug builds work when copied to /Applications
 - Performance difference is negligible for this lightweight app
 - Avoids complexity of managing signing certificates
 
@@ -60,82 +65,78 @@ open /Applications/ResizeWindow.app
 
 ### Project Structure
 
-**Source files are organized in the `ResizeWindow/` subdirectory:**
-- `ResizeWindow/ResizeWindowApp.swift` - Main application logic (single-file implementation)
-- `ResizeWindow/ContentView.swift` - Unused boilerplate from Xcode template
-- `ResizeWindow/Assets.xcassets` - App icon and assets
-- `ResizeWindow/ResizeWindow-Bridging-Header.h` - Objective-C bridging header (currently empty)
+- `ResizeWindow/ResizeWindowApp.swift` — app, popover UI, geometry parsing, target selection, and Accessibility calls
+- `ResizeWindow/Assets.xcassets` — app icon and accent color
+- `ResizeWindowTests/ResizeWindowTests.swift` — tests for parsing and target selection
+- Project configuration (`.xcodeproj`) and documentation (`README.md`, `CLAUDE.md`) live at the repo root
 
-**Repo root contains:**
-- Project configuration files (`.xcodeproj`, `.gitignore`)
-- Documentation (`README.md`, `CLAUDE.md`)
+### UI
 
-### Key Components
+`ResizeWindowApp` uses `@NSApplicationDelegateAdaptor`. `AppDelegate` owns the status item and a transient popover. The popover's `NSHostingController` uses `sizingOptions = [.preferredContentSize]`, so the SwiftUI view is not given a fixed height.
 
-**App Entry and Delegation (ResizeWindowApp.swift:12-50)**
-- `ResizeWindowApp`: Main SwiftUI app entry point using `@NSApplicationDelegateAdaptor`
-- `AppDelegate`: Manages the status bar item and popover lifecycle
+`ResizeContentView` takes width and height, an optional move toggle with X and Y, and shows the selected target app. Buttons are Resize, Check Frontmost Window, Open Accessibility Settings, and Quit. Resize and Check are disabled while a request is in flight. The last result stays in the hosting controller, so reopening the popover shows it again.
 
-**UI Layer (ResizeWindowApp.swift:54-196)**
-- `ResizeContentView`: SwiftUI view providing the resize interface with width/height inputs, optional X/Y positioning, and action buttons
-- Buttons: "Resize", "Check Frontmost Window"
-- Inspection output shows frontmost window info including size (e.g., "Frontmost: iTerm2 (pid:48623) 1440 x 900")
-- Logs inspection output to `~/Library/Logs/ResizeWindowApp.log`
+Width and height must be finite numbers greater than 0. Move requires both X and Y; negative coordinates are valid. Invalid input is reported in the popover and does not call the Accessibility API. X and Y are points from the top-left of the primary display.
 
-**Window Management Layer (ResizeWindowApp.swift:200-508)**
-- `WindowResizer`: Core singleton class that handles all window manipulation via macOS Accessibility APIs
-- Uses `AXUIElement` APIs to discover and manipulate windows
-- Two main resize modes:
-  - `resizeFrontmost()`: Resizes the currently focused window
-  - `resizeSecondFrontmost()`: Resizes the second frontmost window (currently unused in UI)
+### Target selection
 
-### Accessibility API Flow
+`WindowTargetSelector` is a pure function over window records:
 
-1. Check if Accessibility permission is granted via `AXIsProcessTrusted()`
-2. Get the target app's PID (process identifier)
-3. Query for windows using `AXUIElementCopyAttributeValue` with `kAXWindowsAttribute`
-4. Validate if size/position attributes are settable via `isAttributeSettable()`
-5. Set new dimensions using `AXUIElementSetAttributeValue` with `kAXSizeAttribute` and `kAXPositionAttribute`
+1. If the frontmost app is not this process and has an eligible on-screen window, use that app.
+2. Otherwise walk CGWindow z-order from front to back.
+3. Skip PID 0, this process, owners whose names contain "window server", "dock", or "loginwindow", and windows whose layer is present and not 0. A missing layer stays eligible.
 
-### Error Handling
+The focused AX window of that app is resized. If it cannot be read, the first AX window is used.
 
-The `WindowResizer.ResizerError` enum provides three failure modes:
-- `.accessibilityNotTrusted`: User hasn't granted Accessibility permission
-- `.noSuitableWindow`: No valid target window found
-- `.axError(String)`: Low-level Accessibility API failure with diagnostic details
+### Applying a resize
+
+`WindowResizer` is `nonisolated` and is called from `Task.detached`, so Accessibility work does not block the popover. The background task receives the parsed geometry and the frontmost PID captured on the main actor. Each app element gets an Accessibility messaging timeout of 2 seconds.
+
+Size is written first. If that fails, position is left unchanged. If a move was requested and only the position write fails, the result says the size was applied and the position was not. After a successful size write, size and position are read back. The completion text uses those measurements. A difference of more than 1 point from the request is included. A failed readback does not claim that the requested size was applied.
+
+`WindowResizer.ResizerError` has three cases:
+- `.accessibilityNotTrusted`
+- `.noSuitableWindow`
+- `.axError(String)`
+
+Check Frontmost Window writes its text to `~/Library/Logs/ResizeWindowApp.log` from the background task. The file is recreated after it grows past 1MB. Debug diagnostics go to `Logger` subsystem `com.isogawa.ResizeWindow`.
 
 ## Permissions Required
 
-The app requires Accessibility permission to function. Users must manually enable this in:
+The app requires Accessibility permission:
+
 **System Settings → Privacy & Security → Accessibility**
 
-The app includes a button to open these settings directly via `x-apple.systempreferences:` URL scheme.
+Open Accessibility Settings prompts with `AXIsProcessTrustedWithOptions` when needed, then opens:
+
+1. `x-apple.systempreferences:com.apple.settings.PrivacySecurity.extension?Privacy_Accessibility`
+2. `x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility`
+
+Do not use the `x-apple.systemsettings` scheme. It has no handler on this OS.
 
 ## Key Implementation Details
 
-- **Menu bar-only app** (`INFOPLIST_KEY_LSUIElement = YES`) - the app runs exclusively in the menu bar and does not appear in the Dock or Command+Tab switcher
-- **The app runs WITHOUT sandboxing** (`ENABLE_APP_SANDBOX = NO`) - this is critical because sandboxed apps cannot use Accessibility APIs to control other applications
-- No code signing is required for development (`CODE_SIGN_IDENTITY = "-"`)
-- The popover is transient (`.transient` behavior) and closes when clicking outside
-- Window operations run on a background queue (`DispatchQueue.global(qos: .userInitiated)`) to avoid blocking the UI
-- The `inspectFrontmost()` function provides diagnostic information about window z-order and AX hierarchy for debugging
-- After any rebuild, you may need to re-grant Accessibility permission since the app signature changes
+- **Menu bar-only app** (`INFOPLIST_KEY_LSUIElement = YES`). It does not appear in the Dock or Command-Tab switcher.
+- **Sandboxing is off** (`ENABLE_APP_SANDBOX = NO`). Sandboxed apps cannot control other applications through Accessibility.
+- Development signing is ad hoc (`CODE_SIGN_IDENTITY = "-"`). `SWIFT_VERSION` is 6.0 and the default actor isolation remains MainActor. `WindowResizer`, `WindowGeometry`, and `WindowTargetSelector` opt out with `nonisolated`.
+- The popover is `.transient` and closes when clicking outside.
+- Rebuilding can change the signature, so Accessibility permission may need to be granted again.
 
 ## Troubleshooting
 
 **App won't resize windows:**
 - Verify Accessibility permission is granted in System Settings
-- Some apps (like System Settings itself) may not support window resizing via Accessibility APIs
+- Some apps, including System Settings, do not support resizing through Accessibility
 - The app filters out its own windows and system windows (Window Server, Dock, loginwindow)
 
 **"No suitable window found" error:**
-- Ensure another app's window is frontmost and focused
-- The target window must be on layer 0 (normal application windows)
+- Make sure another app has an on-screen window
+- Windows on a non-zero layer are skipped when the layer value is present
 
 **App killed immediately on launch (Release build):**
 - Sign the app: `codesign --force --deep --sign - /path/to/ResizeWindow.app`
-- Or use Debug build instead (recommended)
+- Or use the Debug build
 
 **Permission needs to be re-granted after rebuild:**
-- This is expected behavior - the app signature changes with each build
+- The app signature changes with each build
 - Use `xattr -cr` on the built app to minimize permission prompts
