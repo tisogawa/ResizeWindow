@@ -86,7 +86,7 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation and developme
 
 ## License
 
-Personal project - use freely.
+This project is licensed under the [MIT License](LICENSE).
 
 ## Troubleshooting
 
